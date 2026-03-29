@@ -1,5 +1,5 @@
-const CANVAS_W = 1495
-const CANVAS_H = 2200
+const CANVAS_W = 1495 * 0.33
+const CANVAS_H = 2200 * 0.33
 
 let COLS = 5
 let ROWS = 8
@@ -15,8 +15,8 @@ let videosLoaded = 0
 let thumbnailsLoaded = 0
 let videosLoadingStarted = false
 
-const DATE_SIZE = 44
-const TEXT_BLOCK_SIZE = 100
+const DATE_SIZE = 16
+const TEXT_BLOCK_SIZE = 45
 
 let myFont;
 
@@ -24,7 +24,7 @@ let myFont;
 let sizes = [];
 let cols; 
 let rows; 
-let size = 19;
+let size = 10;
 let xoff = 0; 
 let yoff = 0; 
 let inc = 0.1;
@@ -639,6 +639,7 @@ function generateLayout() {
 function placeTextBlocks() {
   const textsToPlace = [...textBlocks];
   
+  
   for (let i = 0; i < textsToPlace.length; i++) {
     let placed = false;
     let attempts = 0;
@@ -657,7 +658,7 @@ function placeTextBlocks() {
           id: i,
           col, row,
           w: 3,
-          h: 1
+          h: 1,
         });
         placed = true;
       }
@@ -1037,17 +1038,17 @@ function drawSingleTextBlock(p) {
   // Увеличиваем размер шрифта для текстовых блоков в горизонтальном режиме
   let textSizeValue = TEXT_BLOCK_SIZE;
   if (displayMode === 'landscape') {
-    textSizeValue = TEXT_BLOCK_SIZE * 2;
+    textSizeValue = TEXT_BLOCK_SIZE * 1.6;
   }
   textSize(textSizeValue);
   textAlign(LEFT, TOP);
   textLeading(1.1);
   
-  let x = p.col * cellW;
-  let y = p.row * cellH;
+  let x = p.col * cellW - 13;
+  let y = p.row * cellH - 40;
   
   let lines = p.text.split('\n');
-  let lineHeight = textSizeValue * 1.1;
+  let lineHeight = textSizeValue - 6;
   
   for (let i = 0; i < lines.length; i++) {
     text(lines[i], x + 20, y + 40 + (i * lineHeight));
@@ -1420,17 +1421,17 @@ function drawDate(p) {
   
   if (align == "leftTop") {
     textAlign(LEFT, TOP);
-    text(m.date, x + 12, y + 12);
+    text(m.date, x + 5, y + 5);
   }
   
   if (align == "leftBottom") {
     textAlign(LEFT, BOTTOM);
-    text(m.date, x + 12, y + cellH - 12);
+    text(m.date, x + 5, y + cellH - 5);
   }
   
   if (align == "rightBottom") {
     textAlign(RIGHT, BOTTOM);
-    text(m.date, x + cellW - 12, y + cellH - 12);
+    text(m.date, x + cellW - 5, y + cellH - 5);
   }
   pop();
 }
