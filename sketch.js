@@ -287,15 +287,16 @@ function updateCanvasSize() {
 function createToggleSwitch() {
   const toggleContainer = document.createElement('div');
   toggleContainer.style.position = 'fixed';
-  toggleContainer.style.top = '50px';
-  toggleContainer.style.right = '50px';
+  toggleContainer.style.top = '30px';
+  toggleContainer.style.right = '30px';
   toggleContainer.style.zIndex = '2000';
   toggleContainer.style.fontFamily = 'Arial, sans-serif';
   
+  //кнопка фоновая штучка
   const label = document.createElement('label');
   label.style.display = 'inline-block';
-  label.style.width = '170px';
-  label.style.height = '86px';
+  label.style.width = '56px';
+  label.style.height = '28px';
   label.style.position = 'relative';
   label.style.cursor = 'pointer';
   
@@ -318,12 +319,13 @@ function createToggleSwitch() {
   slider.style.transition = '0.3s';
   slider.style.border = '1px solid rgba(255, 255, 255, 0.6)';
   
+  //кружочек тоггл тут
   const round = document.createElement('span');
   round.style.position = 'absolute';
-  round.style.height = '75px';
-  round.style.width = '75px';
-  round.style.left = '5px';
-  round.style.bottom = '2.5px';
+  round.style.height = '24px';
+  round.style.width = '24px';
+  round.style.left = '2px';
+  round.style.bottom = '1.1px';
   round.style.backgroundColor = 'white';
   round.style.borderRadius = '50%';
   round.style.transition = '0.3s';
@@ -339,7 +341,7 @@ function createToggleSwitch() {
   checkbox.addEventListener('change', (e) => {
     if (checkbox.checked) {
       displayMode = 'landscape';
-      round.style.transform = 'translateX(82px)';
+      round.style.transform = 'translateX(27px)';
       slider.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
     } else {
       displayMode = 'portrait';
@@ -351,24 +353,25 @@ function createToggleSwitch() {
 }
 
 function createQuestionMark() {
+  //знак вопросов
   const questionContainer = document.createElement('div');
   questionContainer.style.position = 'fixed';
-  questionContainer.style.top = '50px';
-  questionContainer.style.left = '50px';
+  questionContainer.style.top = '30px';
+  questionContainer.style.left = '30px';
   questionContainer.style.zIndex = '2000';
   questionContainer.style.cursor = 'pointer';
   
   const questionButton = document.createElement('div');
   questionButton.innerHTML = '?';
-  questionButton.style.width = '82px';
-  questionButton.style.height = '82px';
+  questionButton.style.width = '26px';
+  questionButton.style.height = '26px';
   questionButton.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
   questionButton.style.backdropFilter = 'blur(8px)';
   questionButton.style.borderRadius = '50%';
   questionButton.style.display = 'flex';
   questionButton.style.alignItems = 'center';
   questionButton.style.justifyContent = 'center';
-  questionButton.style.fontSize = '42px';
+  questionButton.style.fontSize = '18px';
   questionButton.style.fontWeight = 'bold';
   questionButton.style.color = 'white';
   questionButton.style.border = '1px solid rgba(255, 255, 255, 0.6)';
@@ -817,7 +820,7 @@ function drawPerlinNoise() {
   }
   
   if (noiseActive && userStarted) {
-    zoff += 0.03;
+    zoff += 0.02;
   } else {
     zoff += 0.009;
   }
@@ -1044,7 +1047,7 @@ function drawSingleTextBlock(p) {
   textAlign(LEFT, TOP);
   textLeading(1.1);
   
-  let x = p.col * cellW - 13;
+  let x = p.col * cellW - 14;
   let y = p.row * cellH - 40;
   
   let lines = p.text.split('\n');
