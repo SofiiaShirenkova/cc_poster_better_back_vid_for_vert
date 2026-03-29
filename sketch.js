@@ -292,7 +292,7 @@ function createToggleSwitch() {
   toggleContainer.style.zIndex = '2000';
   toggleContainer.style.fontFamily = 'Arial, sans-serif';
   
-  //кнопка фоновая штучка
+  //кнопка фоновая штучка закруглённая
   const label = document.createElement('label');
   label.style.display = 'inline-block';
   label.style.width = '56px';
@@ -376,7 +376,8 @@ function createQuestionMark() {
   questionButton.style.color = 'white';
   questionButton.style.border = '1px solid rgba(255, 255, 255, 0.6)';
   questionButton.style.transition = 'all 0.3s ease';
-  questionButton.style.fontFamily = 'Arial, sans-serif';
+  questionButton.style.fontFamily = 'Arial_Narrow';
+  // questionButton.style.font = 'font/Arial_Narrow.ttf';
   
   questionButton.onmouseenter = () => {
     questionButton.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
@@ -410,6 +411,7 @@ function showModal() {
   modalOverlay.style.display = 'flex';
   modalOverlay.style.alignItems = 'center';
   modalOverlay.style.justifyContent = 'center';
+  modalOverlay.style.zIndex = '10000';
   
   // Создаем модальное окно
   const modal = document.createElement('div');
@@ -422,6 +424,10 @@ function showModal() {
   modal.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.2)';
   modal.style.position = 'relative';
   modal.style.animation = 'fadeIn 0.3s ease';
+  modal.style.maxHeight = '80vh';
+  modal.style.overflowY = 'auto';
+  modal.style.scrollbarWidth = 'none';
+  modal.style.zIndex = '10000';
   
   // Добавляем анимацию
   const style = document.createElement('style');
@@ -442,14 +448,15 @@ function showModal() {
   // Кнопка закрытия
   const closeButton = document.createElement('div');
   closeButton.innerHTML = '✕';
-  closeButton.style.position = 'absolute';
+  closeButton.style.position = 'sticky';
   closeButton.style.top = '15px';
   closeButton.style.right = '15px';
   closeButton.style.width = '30px';
   closeButton.style.height = '30px';
-  closeButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+  closeButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
   closeButton.style.borderRadius = '50%';
   closeButton.style.display = 'flex';
+  closeButton.style.justifySelf = 'end';
   closeButton.style.alignItems = 'center';
   closeButton.style.justifyContent = 'center';
   closeButton.style.cursor = 'pointer';
@@ -464,7 +471,7 @@ function showModal() {
   };
   
   closeButton.onmouseleave = () => {
-    closeButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+    closeButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
     closeButton.style.transform = 'scale(1)';
   };
   
@@ -475,9 +482,70 @@ function showModal() {
   // Текст внутри модального окна
   const modalText = document.createElement('div');
   modalText.innerHTML = `
-    <h2 style="margin: 0 0 20px 0; color: #333; font-family: Arial, sans-serif;">Информация</h2>
-    <p style="margin: 0; line-height: 1.6; color: #555; font-family: Arial, sans-serif; font-size: 16px;">
-      привет тут будет текст
+
+    <h2 class="h2-in-modal">Hello! Привет!</h2>
+    <p class="p-in-modal">
+      The audiovisual archive is&nbsp;presented as&nbsp;a&nbsp;web 
+      page built on&nbsp;a&nbsp;block-based system, where each element 
+      becomes a&nbsp;fragment of&nbsp;memory captured through sound 
+      and image. This space functions as&nbsp;a&nbsp;living 
+      collection &mdash; fluid, shifting, and unstable &mdash;where 
+      video recordings with audio form a&nbsp;kind of&nbsp;perceptual 
+      diary: from sound performance documentation to&nbsp;fleeting 
+      noises случайно caught in&nbsp;the street. Here, sound does not 
+      merely accompany the image but exists as&nbsp;an&nbsp;independent
+      layer of&nbsp;experience, turning into traces of&nbsp;presence 
+      and time. The background structure is&nbsp;built using Perlin 
+      noise, which acts as&nbsp;an&nbsp;abstract equalizer &mdash; visualizing 
+      the wave nature of&nbsp;sound and creating a&nbsp;pulsating, almost 
+      tangible environment. The Perlin noise implementation is&nbsp;based 
+      on&nbsp;a&nbsp;tutorial by&nbsp;the wonderful Patt Vira 
+      (<a target="_blank" href="https://youtu.be/sN7JotC3vdM?si=RxsWeIzuWav9ybFM">watch the tutorial here</a>).
+      <br><br>
+      The project&rsquo;s generative aspect lies in&nbsp;the fact 
+      that each time the page is&nbsp;refreshed, 
+      the video and text blocks are rearranged, 
+      forming a&nbsp;new composition. This is&nbsp;not 
+      a&nbsp;random process but a&nbsp;system governed 
+      by&nbsp;a&nbsp;set of&nbsp;precise conditions: the 
+      date is&nbsp;always positioned near the video block; 
+      the text tends to&nbsp;occupy the upper-left corner 
+      of&nbsp;its allocated space; depending on&nbsp;surrounding 
+      elements, it&nbsp;may shift to&nbsp;the right, upward, 
+      or&nbsp;to&nbsp;the left while maintaining consistent 
+      alignment principles. If&nbsp;there is&nbsp;already 
+      a&nbsp;block below, the text moves to&nbsp;an&nbsp;adjacent 
+      area; if&nbsp;space on&nbsp;the right is&nbsp;free, 
+      it&nbsp;shifts upward; if&nbsp;not, it&nbsp;moves in&nbsp;the 
+      opposite direction. These rules were designed to&nbsp;ensure 
+      that every new configuration remains visually balanced and 
+      compositionally cohesive despite its variability. 
+      <br><br>
+      The code for the project was developed with the assistance of&nbsp;the DeepSeek neural network.
+    </p><br>
+    <hr>
+    <br>
+    <p class="p-in-modal">
+      Аудио-визуальный архив представляет собой веб-страницу 
+      с&nbsp;блочной системой, в&nbsp;которой каждый элемент 
+      становится фрагментом памяти, зафиксированной в&nbsp;звуке 
+      и&nbsp;изображении. Это пространство работает как живая 
+      коллекция&nbsp;&mdash; текучая, изменчивая, неустойчивая&nbsp;&mdash; 
+      где видеозаписи с&nbsp;аудио складываются в&nbsp;своеобразный 
+      дневник восприятия: от&nbsp;записей саунд-перформансов до&nbsp;мимолётных 
+      шумов, случайно пойманных на&nbsp;улице. Звуки здесь не&nbsp;просто сопровождают 
+      изображение, а&nbsp;формируют самостоятельный слой опыта, 
+      превращаясь в&nbsp;следы присутствия и&nbsp;времени. Фоновая 
+      структура построена на&nbsp;перлин нойзе, который выступает 
+      как абстрактный эквалайзер&nbsp;&mdash; визуализируя волновую 
+      природу звука и&nbsp;создавая пульсирующую, почти осязаемую среду. 
+      Перлин нойз реализован на&nbsp;основе туториала замечательной 
+      Patt Vira (<a target="_blank" href="https://youtu.be/sN7JotC3vdM?si=RxsWeIzuWav9ybFM">посмотреть туториал по&nbsp;ссылке</a>).
+      <br><br>
+
+      Основная генеративность проекта заключается в&nbsp;том, что при каждом обновлении страницы блоки видео и&nbsp;текста перераспределяются, формируя новую композицию. Это не&nbsp;случайный процесс, а&nbsp;система, подчинённая ряду строгих условий: дата всегда располагается рядом с&nbsp;видеоблоком; текст стремится занять левый верхний угол выделенного пространства; в&nbsp;зависимости от&nbsp;соседних элементов он&nbsp;может смещаться вправо, вверх или влево, сохраняя заданные принципы выравнивания. Если под блоком уже находится другой элемент, текст переносится в&nbsp;соседнюю область; если справа пространство свободно&nbsp;&mdash; он&nbsp;поднимается выше; если занято&nbsp;&mdash; смещается в&nbsp;противоположную сторону. Эти правила были разработаны таким образом, чтобы каждая новая конфигурация оставалась визуально сбалансированной и&nbsp;композиционно цельной, несмотря на&nbsp;свою изменчивость.
+      <br><br>
+      Для написания кода использовалась нейросеть DeepSeek.
     </p>
   `;
   
