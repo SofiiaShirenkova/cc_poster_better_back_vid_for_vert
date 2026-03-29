@@ -41,6 +41,20 @@ let displayMode = 'portrait';
 let lastHoveredVideo = null;
 let videoUpdateQueued = false;
 
+// тут курсор!!!
+const cursor = document.querySelector('.custom-cursor');
+
+document.addEventListener('mousemove', (e) => {
+    // Получаем координаты мыши
+    const x = e.clientX;
+    const y = e.clientY;
+    
+    // Перемещаем курсор
+    cursor.style.left = x + 'px';
+    cursor.style.top = y + 'px';
+});
+
+
 // Массив объектов для заглушек
 const thumbnails = [
   {src: "thumbnails/thumb1.jpg", img: null, loaded: false},
@@ -298,7 +312,7 @@ function createToggleSwitch() {
   label.style.width = '56px';
   label.style.height = '28px';
   label.style.position = 'relative';
-  label.style.cursor = 'pointer';
+  // label.style.cursor = 'pointer';
   
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -359,7 +373,7 @@ function createQuestionMark() {
   questionContainer.style.top = '30px';
   questionContainer.style.left = '30px';
   questionContainer.style.zIndex = '2000';
-  questionContainer.style.cursor = 'pointer';
+  // questionContainer.style.cursor = 'pointer';
   
   const questionButton = document.createElement('div');
   questionButton.innerHTML = '?';
@@ -459,7 +473,7 @@ function showModal() {
   closeButton.style.justifySelf = 'end';
   closeButton.style.alignItems = 'center';
   closeButton.style.justifyContent = 'center';
-  closeButton.style.cursor = 'pointer';
+  // closeButton.style.cursor = 'pointer';
   closeButton.style.fontSize = '20px';
   closeButton.style.fontWeight = 'bold';
   closeButton.style.color = '#333';

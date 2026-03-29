@@ -1,6 +1,21 @@
 html, body {
   margin: 0;
   padding: 0;
+  cursor: none;
+}
+
+.custom-cursor{
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-radius: 50%; /* Делает круг */
+  position: fixed;
+  pointer-events: none; /* Курсор не мешает кликам */
+  transform: translate(-50%, -50%); /* Центрирует круг по мыши */
+  transition: transform 0.1s ease; /* Плавность, по желанию */
+  z-index: 999999;
+  background-color: rgba(0, 0, 0, 0.1);
+  mix-blend-mode: overlay;
 }
 
 canvas {
