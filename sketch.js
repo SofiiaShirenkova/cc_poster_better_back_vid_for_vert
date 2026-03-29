@@ -16,7 +16,7 @@ let thumbnailsLoaded = 0
 let videosLoadingStarted = false
 
 const DATE_SIZE = 16
-const TEXT_BLOCK_SIZE = 45
+const TEXT_BLOCK_SIZE = 42
 
 let myFont;
 
@@ -68,20 +68,20 @@ const thumbnails = [
 ]
 
 let media = [
-  {date:"12.07.2024", src:"videos/v1.mp4", video:null, loaded:false, thumbnailIndex: 0, loadAttempted: false, playing: false, element: null},
-  {date:"03.26.2023", src:"videos/v2.mp4", video:null, loaded:false, thumbnailIndex: 1, loadAttempted: false, playing: false, element: null},
-  {date:"05.06.2019", src:"videos/v3.mp4", video:null, loaded:false, thumbnailIndex: 2, loadAttempted: false, playing: false, element: null},
-  {date:"12.12.2022", src:"videos/v4.mp4", video:null, loaded:false, thumbnailIndex: 3, loadAttempted: false, playing: false, element: null},
-  {date:"07.07.2005", src:"videos/v5.mp4", video:null, loaded:false, thumbnailIndex: 4, loadAttempted: false, playing: false, element: null},
-  {date:"12.07.2024", src:"videos/v6.mp4", video:null, loaded:false, thumbnailIndex: 5, loadAttempted: false, playing: false, element: null},
-  {date:"03.26.2023", src:"videos/v7.mp4", video:null, loaded:false, thumbnailIndex: 6, loadAttempted: false, playing: false, element: null},
+  {date:"01.06.2025", src:"videos/v1.mp4", video:null, loaded:false, thumbnailIndex: 0, loadAttempted: false, playing: false, element: null},
+  {date:"29.12.2025", src:"videos/v2.mp4", video:null, loaded:false, thumbnailIndex: 1, loadAttempted: false, playing: false, element: null},
+  {date:"07.01.2026", src:"videos/v3.mp4", video:null, loaded:false, thumbnailIndex: 2, loadAttempted: false, playing: false, element: null},
+  {date:"12.10.2025", src:"videos/v4.mp4", video:null, loaded:false, thumbnailIndex: 3, loadAttempted: false, playing: false, element: null},
+  {date:"13.12.2024", src:"videos/v5.mp4", video:null, loaded:false, thumbnailIndex: 4, loadAttempted: false, playing: false, element: null},
+  {date:"23.03.2025", src:"videos/v6.mp4", video:null, loaded:false, thumbnailIndex: 5, loadAttempted: false, playing: false, element: null},
+  {date:"25.01.2026", src:"videos/v7.mp4", video:null, loaded:false, thumbnailIndex: 6, loadAttempted: false, playing: false, element: null},
   {date:"14.04.2024", src:"videos/v8.mp4", video:null, loaded:false, thumbnailIndex: 6, loadAttempted: false, playing: false, element: null},
   {date:"08.03.2026", src:"videos/v9.mp4", video:null, loaded:false, thumbnailIndex: 6, loadAttempted: false, playing: false, element: null},
 ]
 
 let textBlocks = [
   "Audio-visual\narchive",
-  "Sofiia Shirenkova\n2025"
+  "Sofiia Shirenkova\n2024-2026"
 ]
 
 let gridContainer = null;
@@ -432,7 +432,7 @@ function showModal() {
   modal.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
   modal.style.backdropFilter = 'blur(10px)';
   modal.style.borderRadius = '12px';
-  modal.style.padding = '30px';
+  modal.style.padding = '0px 30px 30px 30px';
   modal.style.maxWidth = '500px';
   modal.style.minWidth = '300px';
   modal.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.2)';
@@ -463,7 +463,7 @@ function showModal() {
   const closeButton = document.createElement('div');
   closeButton.innerHTML = '✕';
   closeButton.style.position = 'sticky';
-  closeButton.style.top = '15px';
+  closeButton.style.top = '25px';
   closeButton.style.right = '15px';
   closeButton.style.width = '30px';
   closeButton.style.height = '30px';
@@ -1130,10 +1130,10 @@ function drawSingleTextBlock(p) {
   textLeading(1.1);
   
   let x = p.col * cellW - 14;
-  let y = p.row * cellH - 40;
+  let y = p.row * cellH - 38;
   
   let lines = p.text.split('\n');
-  let lineHeight = textSizeValue - 6;
+  let lineHeight = textSizeValue - 3;
   
   for (let i = 0; i < lines.length; i++) {
     text(lines[i], x + 20, y + 40 + (i * lineHeight));
