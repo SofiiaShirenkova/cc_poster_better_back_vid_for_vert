@@ -225,10 +225,17 @@ function updateCanvasSize() {
     canvasContainer.style.alignItems = 'flex-start';
     canvasContainer.style.overflow = 'auto';
     
-    // Скрываем фоновое видео в горизонтальном режиме
+    // // Скрываем фоновое видео в горизонтальном режиме
+    // if (backgroundVideo) {
+    //   backgroundVideo.pause();
+    //   backgroundVideo.style.display = 'none';
+    //   isBackgroundPlaying = false;
+    // }
+      // Фоновое видео всегда показывается, просто обновляем его стили
     if (backgroundVideo) {
-      backgroundVideo.pause();
       backgroundVideo.style.display = 'none';
+      backgroundVideo.style.objectFit = 'cover';
+      backgroundVideo.style.zIndex = '0';
       isBackgroundPlaying = false;
     }
   }
@@ -808,33 +815,30 @@ function drawVideo(p) {
   m.video.style.display = 'block';
   m.video.style.zIndex = '2';
   
-  if (hover && userStarted) {
+    if (hover && userStarted) {
     // Включаем звук при наведении
     m.video.muted = false;
     m.video.className = 'color-video';
     
-    // Показываем фоновое видео только в вертикальном режиме
-    if (displayMode === 'portrait') {
-      // Если видео не загружено или источник изменился, обновляем
-      if (backgroundVideo.src !== m.video.src) {
-        // Останавливаем текущее фоновое видео
-        if (isBackgroundPlaying) {
-          backgroundVideo.pause();
-          isBackgroundPlaying = false;
-        }
-        backgroundVideo.src = m.video.src;
-        backgroundVideo.load();
+    // Показываем фоновое видео в обоих режимах
+    if (backgroundVideo.src !== m.video.src) {
+      // Останавливаем текущее фоновое видео
+      if (isBackgroundPlaying) {
+        backgroundVideo.pause();
+        isBackgroundPlaying = false;
       }
-      
-      // Запускаем фоновое видео, только если оно не играет
-      if (!isBackgroundPlaying) {
-        backgroundVideo.style.display = 'block';
-        backgroundVideo.play()
-          .then(() => {
-            isBackgroundPlaying = true;
-          })
-          .catch(e => console.log("Background play error:", e));
-      }
+      backgroundVideo.src = m.video.src;
+      backgroundVideo.load();
+    }
+    
+    // Запускаем фоновое видео, только если оно не играет
+    if (!isBackgroundPlaying) {
+      backgroundVideo.style.display = 'block';
+      backgroundVideo.play()
+        .then(() => {
+          isBackgroundPlaying = true;
+        })
+        .catch(e => console.log("Background play error:", e));
     }
     
     if (m.video.paused) {
@@ -844,17 +848,31 @@ function drawVideo(p) {
       m.playing = true;
     }
   } else {
-    // Выключаем звук когда не наведены
-    m.video.muted = true;
-    m.video.className = 'gray-video';
+    // // Выключаем звук когда не наведены
+    // m.video.muted = true;
+    // m.video.className = 'gray-video';
     
-    // Останавливаем и скрываем фоновое видео
-    if (displayMode === 'portrait' && isBackgroundPlaying) {
+    // // Останавливаем и скрываем фоновое видео
+    // if (displayMode === 'portrait' && isBackgroundPlaying) {
+    //   backgroundVideo.pause();
+    //   backgroundVideo.style.display = 'none';
+    //   isBackgroundPlaying = false;
+    // }
+    
+    // if (!m.video.paused) {
+    //   m.video.pause();
+    //   m.playing = false;
+    // }
+        m.video.muted = true;
+    m.video.className = 'gray-video';
+
+    // Скрываем фоновое видео, когда ховер убран
+    if (isBackgroundPlaying) {
       backgroundVideo.pause();
       backgroundVideo.style.display = 'none';
       isBackgroundPlaying = false;
     }
-    
+
     if (!m.video.paused) {
       m.video.pause();
       m.playing = false;
