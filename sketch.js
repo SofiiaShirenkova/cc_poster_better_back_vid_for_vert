@@ -37,6 +37,10 @@ let isBackgroundPlaying = false;
 // Режим отображения: 'portrait' или 'landscape'
 let displayMode = 'portrait';
 
+// Добавьте эти переменные в начало файла
+let lastHoveredVideo = null;
+let videoUpdateQueued = false;
+
 // Массив объектов для заглушек
 const thumbnails = [
   {src: "thumbnails/thumb1.jpg", img: null, loaded: false},
@@ -129,6 +133,19 @@ function preload() {
 }
 
 function setup() {
+  const style = document.createElement('style');
+  style.textContent = `
+    video {
+      display: block !important;
+      transition: none !important;
+    }
+    
+    /* Предотвращаем любые анимации, которые могут вызвать мигание */
+    video.gray-video, video.color-video {
+      transition: filter 0.2s ease;
+    }
+  `;
+  document.head.appendChild(style);
   // Создаем фоновое видео (самый нижний слой)
   backgroundVideo = document.createElement('video');
   backgroundVideo.style.position = 'fixed';
@@ -185,6 +202,19 @@ function setup() {
 
   generateLayout();
   textFont(myFont);
+
+  addGlobalStyles();
+
+  if (backgroundVideo) {
+    backgroundVideo.id = 'background-video';
+  }
+
+  addZIndexStyles();
+  
+  // Даем ID фоновому видео
+  if (backgroundVideo) {
+    backgroundVideo.id = 'background-video';
+  }
   
   console.log(`Setup complete. Thumbnails: ${thumbnailsLoaded}/${thumbnails.length}`);
   
@@ -193,6 +223,8 @@ function setup() {
       startBackgroundVideoLoading();
     }
   }, 1000);
+
+
 }
 
 function updateCanvasSize() {
@@ -476,33 +508,25 @@ function closeModal() {
   }
 }
 
+// Также вызывайте updateVideoPositions после регенерации лейаута
 function regenerateLayout() {
-  // Обновляем размер канваса
   updateCanvasSize();
-  
-  // Обновляем размеры ячеек
   cellW = width / COLS;
   cellH = height / ROWS;
-  
-  // Обновляем параметры перлин-нойза
   cols = ceil(width / size);
   rows = ceil(height / size);
   
-  // Обновляем позицию сетки DOM
   if (gridContainer) {
     gridContainer.style.width = width + 'px';
     gridContainer.style.height = height + 'px';
-    gridContainer.style.left = (canvasContainer.offsetLeft + (displayMode === 'portrait' ? (canvasContainer.clientWidth - width) / 2 : 0)) + 'px';
-    gridContainer.style.top = (canvasContainer.offsetTop + (displayMode === 'portrait' ? (canvasContainer.clientHeight - height) / 2 : 0)) + 'px';
+    const canvasRect = document.querySelector('canvas').getBoundingClientRect();
+    gridContainer.style.left = canvasRect.left + 'px';
+    gridContainer.style.top = canvasRect.top + 'px';
   }
   
   updateGridOverlay();
-  
-  // Перегенерируем размещение
   generateLayout();
-  
-  // Обновляем позиции видео
-  updateVideoPositions();
+  updateVideoPositions(); // Обновляем позиции видео
 }
 
 function updateVideoPositions() {
@@ -594,13 +618,14 @@ function updateGridOverlay() {
   gridContainer.appendChild(border);
 }
 
+// Вызывайте updateVideoPositions при изменении размера окна
 function windowResized() {
   if (displayMode === 'landscape') {
     updateCanvasSize();
     cellW = width / COLS;
     cellH = height / ROWS;
     updateGridOverlay();
-    updateVideoPositions();
+    updateVideoPositions(); // Обновляем позиции видео
   }
 }
 
@@ -704,12 +729,12 @@ function lazyLoadVideoOnHover(m) {
 }
 
 function draw() {
-  // Очищаем канвас с прозрачным фоном, чтобы было видно фоновое видео
   clear();
-  drawPerlinNoise();
-  drawAllTextBlocks();
-  drawAllMedia();
+  drawPerlinNoise();    // Шум внизу
+  drawAllTextBlocks();  // Текст поверх шума
+  drawAllMedia();       // Видео (но они DOM-элементы, не рисуются на канвасе)
   
+  // Текст загрузки
   if (!userStarted && (videosLoaded < media.length || thumbnailsLoaded < thumbnails.length)) {
     push();
     fill(0);
@@ -726,6 +751,48 @@ function draw() {
     pop();
   }
 }
+
+// Добавьте CSS стили для правильного z-index
+function addZIndexStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    canvas {
+      position: relative;
+      z-index: 5 !important;
+      background-color: transparent !important;
+    }
+    
+    video {
+      position: fixed !important;
+      transition: none !important;
+      object-fit: cover;
+    }
+    
+    /* Обычные видео (без ховера) - под канвасом */
+    video.gray-video {
+      z-index: 1 !important;
+      filter: grayscale(100%);
+    }
+    
+    /* Видео при наведении - над канвасом */
+    video.color-video {
+      z-index: 10 !important;
+      filter: grayscale(0%);
+    }
+    
+    /* Фоновое видео */
+    #background-video {
+      z-index: 0 !important;
+    }
+    
+    /* Контейнер канваса */
+    .canvas-container {
+      z-index: 5 !important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 
 function drawPerlinNoise() {
   xoff = 0;
@@ -771,6 +838,57 @@ function drawAllTextBlocks() {
   }
 }
 
+// Обновите функцию updateVideoOnHover
+function updateVideoOnHover(hoveredVideo) {
+  if (lastHoveredVideo === hoveredVideo) return;
+  
+  // Скрываем предыдущее видео
+  if (lastHoveredVideo && lastHoveredVideo.video) {
+    lastHoveredVideo.video.muted = true;
+    lastHoveredVideo.video.className = 'gray-video';
+    lastHoveredVideo.video.style.zIndex = '1'; // Видео под канвасом когда не в фокусе
+    if (!lastHoveredVideo.video.paused) {
+      lastHoveredVideo.video.pause();
+      lastHoveredVideo.playing = false;
+    }
+  }
+  
+  // Останавливаем фоновое видео (ЭТО ВАЖНО - всегда останавливаем)
+  if (isBackgroundPlaying) {
+    backgroundVideo.pause();
+    backgroundVideo.style.display = 'none';
+    isBackgroundPlaying = false;
+  }
+  
+  // Показываем новое видео
+  if (hoveredVideo && hoveredVideo.video && userStarted) {
+    hoveredVideo.video.muted = false;
+    hoveredVideo.video.className = 'color-video';
+    hoveredVideo.video.style.display = 'block';
+    hoveredVideo.video.style.zIndex = '10'; // Видео ПОВЕРХ канваса когда в фокусе
+    
+    // Запускаем фоновое видео ТОЛЬКО если есть наведение
+    if (backgroundVideo.src !== hoveredVideo.video.src) {
+      backgroundVideo.src = hoveredVideo.video.src;
+      backgroundVideo.load();
+    }
+    
+    backgroundVideo.style.display = 'block';
+    backgroundVideo.style.zIndex = '0'; // Фоновое видео под всем
+    backgroundVideo.play().catch(e => console.log("Background play error:", e));
+    isBackgroundPlaying = true;
+    
+    if (hoveredVideo.video.paused) {
+      hoveredVideo.video.play().catch(error => {
+        console.log("Auto-play prevented:", error);
+      });
+      hoveredVideo.playing = true;
+    }
+  }
+  
+  lastHoveredVideo = hoveredVideo;
+}
+
 function drawVideo(p) {
   let x = p.col * cellW;
   let y = p.row * cellH;
@@ -787,6 +905,10 @@ function drawVideo(p) {
   }
   
   if (!m.loaded) {
+    if (m.video) {
+      m.video.style.display = 'none';
+    }
+    
     if (thumb && thumb.loaded && thumb.img) {
       push();
       image(thumb.img, x, y, w, h);
@@ -807,22 +929,22 @@ function drawVideo(p) {
   
   const canvasRect = document.querySelector('canvas').getBoundingClientRect();
   
+  // Обновляем позицию видео
   m.video.style.position = 'fixed';
   m.video.style.left = (canvasRect.left + x) + 'px';
   m.video.style.top = (canvasRect.top + y) + 'px';
   m.video.style.width = w + 'px';
   m.video.style.height = h + 'px';
-  m.video.style.display = 'block';
-  m.video.style.zIndex = '2';
   
-    if (hover && userStarted) {
-    // Включаем звук при наведении
+  // Управляем отображением и z-index
+  if (hover && userStarted) {
+    m.video.style.display = 'block';
+    m.video.style.zIndex = '10'; // Видео поверх всего при наведении
     m.video.muted = false;
     m.video.className = 'color-video';
     
-    // Показываем фоновое видео в обоих режимах
+    // Фоновое видео
     if (backgroundVideo.src !== m.video.src) {
-      // Останавливаем текущее фоновое видео
       if (isBackgroundPlaying) {
         backgroundVideo.pause();
         isBackgroundPlaying = false;
@@ -831,9 +953,9 @@ function drawVideo(p) {
       backgroundVideo.load();
     }
     
-    // Запускаем фоновое видео, только если оно не играет
     if (!isBackgroundPlaying) {
       backgroundVideo.style.display = 'block';
+      backgroundVideo.style.zIndex = '0'; // Фон под всем
       backgroundVideo.play()
         .then(() => {
           isBackgroundPlaying = true;
@@ -848,45 +970,63 @@ function drawVideo(p) {
       m.playing = true;
     }
   } else {
-    // // Выключаем звук когда не наведены
-    // m.video.muted = true;
-    // m.video.className = 'gray-video';
-    
-    // // Останавливаем и скрываем фоновое видео
-    // if (displayMode === 'portrait' && isBackgroundPlaying) {
-    //   backgroundVideo.pause();
-    //   backgroundVideo.style.display = 'none';
-    //   isBackgroundPlaying = false;
-    // }
-    
-    // if (!m.video.paused) {
-    //   m.video.pause();
-    //   m.playing = false;
-    // }
-        m.video.muted = true;
+    m.video.muted = true;
     m.video.className = 'gray-video';
-
-    // Скрываем фоновое видео, когда ховер убран
+    m.video.style.zIndex = '1'; // Видео под канвасом когда не наведены
+    
+    // Останавливаем фоновое видео когда нет ховера
     if (isBackgroundPlaying) {
       backgroundVideo.pause();
       backgroundVideo.style.display = 'none';
       isBackgroundPlaying = false;
     }
-
+    
     if (!m.video.paused) {
       m.video.pause();
       m.playing = false;
     }
   }
   
-  // Обновляем текущее ховер видео
-  if (hover && userStarted) {
-    currentHoveredVideo = m;
-  } else if (!hover && currentHoveredVideo === m) {
-    currentHoveredVideo = null;
-  }
-  
   drawDate(p);
+}
+
+
+// Добавьте эту функцию и вызовите её в setup()
+function addGlobalStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Канвас - средний слой */
+    canvas {
+      position: relative;
+      z-index: 5 !important;
+      background-color: transparent !important;
+    }
+    
+    /* Видео по умолчанию - под канвасом */
+    video {
+      position: fixed !important;
+      z-index: 1 !important;
+      transition: z-index 0s;
+      pointer-events: auto;
+      object-fit: cover;
+    }
+    
+    /* Видео при наведении - над канвасом */
+    video.color-video {
+      z-index: 10 !important;
+    }
+    
+    /* Фоновое видео - самый нижний слой */
+    #background-video {
+      z-index: 0 !important;
+    }
+    
+    /* Контейнер сетки */
+    .grid-container {
+      z-index: 4 !important;
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 function drawSingleTextBlock(p) {

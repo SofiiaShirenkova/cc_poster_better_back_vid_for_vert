@@ -6,12 +6,6 @@ canvas {
   display: block;
 }
 
-/* .gray-video {
-  filter: grayscale(100%);
-}
-.color-video {
-  filter: grayscale(0%);
-} */
 
   video {
     object-fit: cover;
